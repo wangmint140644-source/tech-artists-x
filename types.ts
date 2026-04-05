@@ -1,10 +1,11 @@
 export interface GraphNode {
   id: string;
   name: string;
-  group: 'company' | 'founder' | 'researcher' | 'investor' | 'media';
+  group: 'artist' | 'collective' | 'curator' | 'institution' | 'media';
   role?: string; // Job title or description
   handle?: string; // X (Twitter) username without @
-  associated?: string; // Associated company or lab
+  associated?: string; // Associated studio or institution
+  nationality?: string; // Country / nationality for filtering
   val?: number; // Influence score (calculated runtime)
   color?: string; // Visual color
   x?: number;
@@ -36,7 +37,7 @@ export interface GraphData {
 export interface InfluencerResponse {
   newNodes: Array<{ 
     name: string; 
-    group: 'company' | 'founder' | 'researcher' | 'investor' | 'media';
+    group: 'artist' | 'collective' | 'curator' | 'institution' | 'media';
     role: string;
     handle: string;
     associated: string;

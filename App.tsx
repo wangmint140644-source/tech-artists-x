@@ -30,6 +30,7 @@ export default function App() {
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedNationality, setSelectedNationality] = useState<string | null>(null);
 
   // Refs for scrolling
   const listContainerRef = useRef<HTMLDivElement>(null);
@@ -79,12 +80,23 @@ export default function App() {
     return map;
   }, [sortedNodes]);
 
-  // Filter nodes based on search query and selected category
+  // All nationalities for filter dropdown
+  const allNationalities = useMemo(() => {
+    const set = new Set<string>();
+    data.nodes.forEach(n => { if ((n as any).nationality) set.add((n as any).nationality); });
+    return Array.from(set).sort();
+  }, [data]);
+
+  // Filter nodes based on search query, selected category, and nationality
   const filteredNodes = useMemo(() => {
     let nodes = sortedNodes;
 
     if (selectedCategory) {
       nodes = nodes.filter(node => node.group === selectedCategory);
+    }
+
+    if (selectedNationality) {
+      nodes = nodes.filter(node => (node as any).nationality === selectedNationality);
     }
 
     if (searchQuery.trim()) {
@@ -107,14 +119,17 @@ export default function App() {
     }
 
     return nodes;
-  }, [sortedNodes, searchQuery, selectedCategory]);
+  }, [sortedNodes, searchQuery, selectedCategory, selectedNationality]);
 
-  // Build filtered graph data for the 3D view when a category is selected
+  // Build filtered graph data for the 3D view when a category or nationality is selected
   const filteredGraphData = useMemo(() => {
-    if (!selectedCategory) return data;
+    if (!selectedCategory && !selectedNationality) return data;
 
     const filteredNodeIds = new Set(
-      data.nodes.filter(n => n.group === selectedCategory).map(n => n.id)
+      data.nodes.filter(n =>
+        (!selectedCategory || n.group === selectedCategory) &&
+        (!selectedNationality || (n as any).nationality === selectedNationality)
+      ).map(n => n.id)
     );
 
     return {
@@ -125,7 +140,7 @@ export default function App() {
         return filteredNodeIds.has(sId) && filteredNodeIds.has(tId);
       }),
     };
-  }, [data, selectedCategory]);
+  }, [data, selectedCategory, selectedNationality]);
 
   // Scroll to selected node in the sidebar
   useEffect(() => {
@@ -159,6 +174,12 @@ export default function App() {
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(prev => prev === category ? null : category);
+    setSelectedNode(null);
+    setShowCreatorCard(false);
+  };
+
+  const handleNationalityClick = (nationality: string) => {
+    setSelectedNationality(prev => prev === nationality ? null : nationality);
     setSelectedNode(null);
     setShowCreatorCard(false);
   };
@@ -201,7 +222,7 @@ export default function App() {
         className={`absolute top-0 left-0 h-full bg-[#05060A]/80 backdrop-blur-xl border-r border-white/10 z-30 transition-all duration-300 ease-in-out flex flex-col ${isMobile ? (isSidebarOpen ? 'w-72 translate-x-0' : 'w-72 -translate-x-72') : (isSidebarOpen ? 'w-80 translate-x-0' : 'w-80 -translate-x-80')}`}
       >
         <div className="px-4 py-3 border-b border-white/10 bg-[#05060A]/50">
-            <h1 className="text-xl font-display font-bold text-white tracking-tight">Top AI Influencers on X</h1>
+            <h1 className="text-xl font-display font-bold text-white tracking-tight">科技艺术家 on X</h1>
             <p className="text-xs text-slate-400 mt-0.5">Data last updated: {LAST_UPDATED}</p>
         </div>
 
@@ -225,6 +246,29 @@ export default function App() {
               </button>
             )}
           </div>
+        </div>
+
+        {/* 国籍筛选 */}
+        <div className="p-3 border-b border-white/10">
+          <div className="text-xs text-slate-400 uppercase tracking-wider font-medium mb-2">🌍 按国籍筛选</div>
+          <select
+            value={selectedNationality || ''}
+            onChange={(e) => setSelectedNationality(e.target.value || null)}
+            className="w-full px-3 py-1.5 bg-slate-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 appearance-none cursor-pointer"
+          >
+            <option value="">全部国家 / 地区</option>
+            {allNationalities.map(nat => (
+              <option key={nat} value={nat}>{nat}</option>
+            ))}
+          </select>
+          {selectedNationality && (
+            <button
+              onClick={() => setSelectedNationality(null)}
+              className="mt-1 text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors"
+            >
+              ✕ 清除国籍筛选
+            </button>
+          )}
         </div>
 
         {/* Scrollable List */}
@@ -458,6 +502,12 @@ export default function App() {
 
                         {/* Meta Info Row: Location, Website, Joined */}
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-500 mb-4">
+                            {(selectedNode as any).nationality && (
+                                <div className="flex items-center gap-1">
+                                    <span className="text-xs">🌍</span>
+                                    <span>{(selectedNode as any).nationality}</span>
+                                </div>
+                            )}
                             {selectedNode.location && (
                                 <div className="flex items-center gap-1">
                                     <MapPin className="w-4 h-4" />
@@ -466,13 +516,13 @@ export default function App() {
                             )}
                             {selectedNode.website && (
                                 <a
-                                    href={`https://${selectedNode.website}`}
+                                    href={selectedNode.website.startsWith('http') ? selectedNode.website : `https://${selectedNode.website}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-1 text-indigo-400 hover:underline"
                                 >
                                     <Link2 className="w-4 h-4" />
-                                    <span>{selectedNode.website}</span>
+                                    <span className="truncate max-w-[160px]">{selectedNode.website.replace(/^https?:\/\//, '')}</span>
                                 </a>
                             )}
                             {selectedNode.joinedDate && (
@@ -519,11 +569,11 @@ export default function App() {
         </button>
         <div className={`flex flex-col gap-1 overflow-hidden transition-all duration-300 ease-in-out ${isLegendOpen ? 'mt-3 max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}>
           {[
-            { key: 'company', color: '#FFD4A3', label: 'Company / Organization' },
-            { key: 'founder', color: '#A3D4FF', label: 'Founder / Builder' },
-            { key: 'researcher', color: '#E0B3FF', label: 'Researcher / Academia' },
-            { key: 'investor', color: '#B3FFB3', label: 'Investor' },
-            { key: 'media', color: '#FFB3D9', label: 'Media' },
+            { key: 'artist', color: '#A3D4FF', label: '艺术家 Artist' },
+            { key: 'collective', color: '#E0B3FF', label: '团体 Collective' },
+            { key: 'curator', color: '#B3FFB3', label: '策展人 Curator' },
+            { key: 'institution', color: '#FFD4A3', label: '机构 Institution' },
+            { key: 'media', color: '#FFB3D9', label: '媒体 Media' },
           ].map(cat => (
             <button
               key={cat.key}

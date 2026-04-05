@@ -191,14 +191,14 @@ const Graph3D: React.FC<Graph3DProps> = ({ data, onNodeClick, onClearSelection, 
   // Color scheme by category - pastel/light tinted colors
   const getCategoryColor = useCallback((group: string) => {
     switch (group) {
-      case 'company':
-        return '#FFD4A3'; // Light peach/orange
-      case 'founder':
+      case 'artist':
         return '#A3D4FF'; // Light sky blue
-      case 'researcher':
+      case 'collective':
         return '#E0B3FF'; // Light lavender
-      case 'investor':
+      case 'curator':
         return '#B3FFB3'; // Light mint green
+      case 'institution':
+        return '#FFD4A3'; // Light peach/orange
       case 'media':
         return '#FFB3D9'; // Light pink
       default:
@@ -208,7 +208,7 @@ const Graph3D: React.FC<Graph3DProps> = ({ data, onNodeClick, onClearSelection, 
 
   // Node color based on category and selection state
   const getNodeColor = useCallback((node: any) => {
-    const baseColor = getCategoryColor(node.group || 'company');
+    const baseColor = getCategoryColor(node.group || 'artist');
 
     if (selectedNode) {
       if (node.id === selectedNode.id) {
