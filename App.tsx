@@ -6,13 +6,13 @@ import { X as XIcon, ExternalLink, Building2, Link2, ChevronLeft, ChevronRight, 
 
 // Creator profile
 const CREATOR_PROFILE: GraphNode = {
-  id: 'jenny_the_bunny',
-  name: 'Jenny',
-  handle: 'Jenny_the_Bunny',
+  id: 'tech_artists_x',
+  name: '科技艺术家图谱',
+  handle: 'TechArtistsX',
   group: 'founder',
-  role: 'Creator of this page',
-  bio: 'Building cool things with AI. Creator of this AI influencer page. Let\'s be friends on X!',
-  joinedDate: 'Mar 2015 but never used until Feb 2026',
+  role: '本页面策划者',
+  bio: '记录 X 上最具影响力的科技艺术家、生成艺术创作者、策展人与机构。涵盖 AI art、generative art、new media、creative coding 等领域。',
+  joinedDate: 'Apr 2026',
   verified: 'blue',
 };
 
@@ -222,8 +222,8 @@ export default function App() {
         className={`absolute top-0 left-0 h-full bg-[#05060A]/80 backdrop-blur-xl border-r border-white/10 z-30 transition-all duration-300 ease-in-out flex flex-col ${isMobile ? (isSidebarOpen ? 'w-72 translate-x-0' : 'w-72 -translate-x-72') : (isSidebarOpen ? 'w-80 translate-x-0' : 'w-80 -translate-x-80')}`}
       >
         <div className="px-4 py-3 border-b border-white/10 bg-[#05060A]/50">
-            <h1 className="text-xl font-display font-bold text-white tracking-tight">科技艺术家 on X</h1>
-            <p className="text-xs text-slate-400 mt-0.5">Data last updated: {LAST_UPDATED}</p>
+            <h1 className="text-xl font-display font-bold text-white tracking-tight">🎨 科技艺术家 on X</h1>
+            <p className="text-xs text-slate-400 mt-0.5">300位创作者 · 更新于 {LAST_UPDATED}</p>
         </div>
 
         {/* Search Bar */}
@@ -334,15 +334,15 @@ export default function App() {
             <div className="min-w-0 flex-1">
               <div className="flex items-baseline gap-1.5 truncate">
                 <span className={`text-sm font-semibold ${showCreatorCard ? 'text-white' : 'text-slate-200'}`}>
-                  Jenny
+                  科技艺术家图谱
                 </span>
                 <span className="text-xs text-slate-500 font-mono truncate">
-                  @Jenny_the_Bunny
+                  @TechArtistsX
                 </span>
               </div>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-xs text-slate-500 truncate">
-                  Creator of this page
+                  关于本页面
                 </span>
               </div>
             </div>
@@ -628,36 +628,28 @@ export default function App() {
             {/* Content */}
             <div className="px-5 py-3 space-y-2.5">
               <div>
-                <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-1">Discovery & Selection</h3>
+                <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-1">发现与筛选</h3>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  Starting from <span className="text-white font-medium">seed accounts</span> (OpenAI, Anthropic, DeepMind, top researchers), we crawl who they follow to find AI voices. If multiple trusted sources follow someone, they matter. The top 300 are selected using:
+                  以 <span className="text-white font-medium">15–20个种子账号</span>（知名艺术节、策展人、代表性艺术家、垂直媒体）为起点，基于关注关系构建网络。TOP 300 按以下公式计分：
                 </p>
                 <div className="bg-slate-800/50 border border-white/10 rounded-md px-2.5 py-1.5 font-mono text-xs text-white mt-1.5 mb-1">
-                  Score = log<sub>10</sub>(followers) x seed_connections
+                  Score = log<sub>10</sub>(粉丝数) × (种子关联数 × 类型权重)
                 </div>
                 <p className="text-xs text-slate-400">
-                  Log scale prevents mega-accounts from dominating. Minimum 1K followers, AI keywords in bio, blocklist for general media.
+                  硬性门槛：粉丝数 ≥ 1500，简介含 AI art / generative art / new media 等关键词；屏蔽 crypto / NFT / investment 等无关词。策展人关联额外乘 1.5 倍权重。
                 </p>
               </div>
 
               <div>
-                <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-1">Graph & Connections</h3>
+                <h3 className="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-1">图谱与连接</h3>
                 <p className="text-xs text-slate-300 leading-relaxed">
-                  The default view shows all connections. <span className="text-white font-medium">Click a node</span> to see who they follow. Node sizes reflect followers. Filter by category using the legend.
+                  默认展示全部连接关系。<span className="text-white font-medium">点击节点</span>可查看其关注网络，节点大小反映粉丝数量。可通过左侧分类和国籍进行筛选。
                 </p>
               </div>
 
               <div className="pt-2 border-t border-white/10">
                 <p className="text-xs text-slate-400">
-                  This methodology may not be perfect. Have ideas?{' '}
-                  <a
-                    href="https://x.com/Jenny_the_Bunny"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300"
-                  >
-                    Hit me up on X
-                  </a>
+                  数据持续更新，如有建议或遗漏欢迎反馈 🎨
                 </p>
               </div>
             </div>
